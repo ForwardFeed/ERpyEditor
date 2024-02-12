@@ -1,0 +1,4 @@
+pywebview==4.4.1
+
+# py2app==0.28.7
+# this^ was for the building part, not needed.
