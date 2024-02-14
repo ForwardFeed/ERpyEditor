@@ -1,4 +1,2 @@
 #!/usr/bin/env bash
-python3 main.py > debug.txt &
-echo $!
-# allows
+script debug.txt -c '(python3 main.py) &>debug.txt'
