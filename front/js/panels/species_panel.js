@@ -5,7 +5,7 @@ import { search } from "../search.js"
 import { queryFilter2, longClickToFilter } from "../filters.js"
 import { gameData } from "../data_version.js"
 import { createInformationWindow, removeInformationWindow } from "../window.js"
-import { getDefensiveCoverage, abilitiesToAddedType } from "../weakness.js"
+import { getDefensiveCoverage, abilitiesToAddedType} from "../weakness.js"
 import { nodeLists } from "../hydrate.js"
 import { cubicRadial } from "../radial.js"
 
@@ -30,7 +30,8 @@ export function feedPanelSpecies(id) {
     $('#species-front')[0].dataset.shiny = "off"
     setAbilities(specie.stats.abis, specie)
     setInnates(specie.stats.inns)
-    setTypes([...new Set(specie.stats.types), abilitiesExtraType(0, specie)])
+    specie.activeAbi = 0
+    setTypes([...new Set(specie.stats.types), abilitiesExtraType(specie.activeAbi, specie)], specie)
     setAllMoves(specie)
     setEvos(specie.evolutions)
     setLocations(specie.locations, specie.SEnc)
@@ -75,7 +76,7 @@ function setDefensiveCoverage(coverage) {
     core.append(frag)
 }
 
-function setTypes(types) {
+function setTypes(types, specie) {
     types = types.filter(x => x != undefined)
     const core = $('#species-types')
     for (let i = 0; i < 3; i++) {
@@ -88,7 +89,11 @@ function setTypes(types) {
         node.show()
         node.text(type).attr("class", `type ${type.toLowerCase()}`)
     }
-    setDefensiveCoverage(getDefensiveCoverage(types.map(x => gameData.typeT[x])))
+    setDefensiveCoverage(
+        getDefensiveCoverage(
+            types.map(x => gameData.typeT[x]), [specie.stats.abis[specie.activeAbi], ...specie.stats.inns]
+        )
+    )
 }
 
 export function setAllMoves(specie = gameData.species[currentSpecieID]){
@@ -131,11 +136,12 @@ function setMoveName(move) {
 function setMoveRow(moveID) {
     const row = document.createElement('div')
     row.className = "species-move-row"
-    row.onclick = (ev) => {
+    row.onclick = function(){
         fastdom.mutate(() => {
-            createInformationWindow(moveOverlay(moveID), ev)
+            createInformationWindow(moveOverlay(moveID), this.ev)
         });
     }
+    longClickToFilter(0, row, "Move", ()=>{return row.querySelector('.species-move-name')?.innerText || ""})
     return row
 }
 
@@ -239,12 +245,13 @@ function setAbilities(abilities, specie) {
                 return undefined
             }
             const abi = gameData.abilities[abilities[i]]
-            const name = e("div", "species-abilities", abi.name)
+            const name = e("div", "species-ability", abi.name)
             addTooltip(name, abi.desc)
             name.onclick = () => {
                 $('#species-abilities .sel-active').removeClass('sel-active').addClass('sel-n-active')
                 name.classList.replace('sel-n-active', 'sel-active')
-                setTypes([...new Set(specie.stats.types), abilitiesExtraType(i, specie)])
+                specie.activeAbi = i
+                setTypes([...new Set(specie.stats.types), abilitiesExtraType(specie.activeAbi, specie)], specie)
             }
             name.classList.add(i ? "sel-n-active" : "sel-active")
             longClickToFilter(0, name, "ability", () => { return abi.name })
@@ -486,9 +493,6 @@ export function setupReorderBtn() {
                     undefined // if you don't make it a square it won't work
                 ], "4em", "1em"), ev, "mid", true, false)
             }],
-            ["", () => {
-
-            }]
         ], "6em", "1em"), ev, "mid", true, false)
     }
 
@@ -499,7 +503,7 @@ export const queryMapSpecies = {
     "name": (queryData, specie) => {
         const specieName = specie.name.toLowerCase()
         if (AisInB(queryData, specieName)) {
-            return [queryData === specieName, specie.name, true]
+            return specie.name
         }
     },
     "type": (queryData, specie) => {
@@ -524,12 +528,14 @@ export const queryMapSpecies = {
     },
     "move": (queryData, specie) => {
         let moves = specie.allMoves?.map((x) => gameData.moves[x].name.toLowerCase()) || []
+        let isUnperfectMatch = false
         for (const move of moves) {
             if (AisInB(queryData, move)) {
-                return [queryData === move, move, false]
+                if (queryData === move) return [true, move, false]
+                isUnperfectMatch = move
             }
         }
-        return false
+        return isUnperfectMatch
     },
     "region": (queryData, specie) => {
         const specieRegion = specie.region?.toLowerCase() || ""
@@ -554,6 +560,6 @@ export function updateSpecies(searchQuery) {
             node.hide()
         }
     }
-    // also it should apply the filters to the specie console.log(moveID, matchedMoves)
-    if (validID) feedPanelSpecies(validID)
+    //if the current selection isn't in the list then change
+    if (matched && matched.indexOf(currentSpecieID) == -1 && validID) feedPanelSpecies(validID)
 }

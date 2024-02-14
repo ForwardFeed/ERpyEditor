@@ -148,6 +148,10 @@ span{
     font-size: 2vmax;
     box-shadow: inset 0 0 1vmax var(--shadow);
 }
+.abi-row > div{
+    -webkit-user-select: text; /* Safari */
+    user-select: text; /* Standard syntax */
+}
 .abi-desc{
     padding-left: 1%;
     flex-grow: 1;
@@ -344,16 +348,21 @@ span{
 }
 #species-innates, #species-abilities{
     font-size: 1.5vmax;
-    display: grid;
-    padding: 1%;
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
     cursor: default;
+    align-items: center;
+    width: 100%; 
+}
+.species-innate, .species-ability{
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
 
-}
-.species-innate,.species-ability{
-    width: 6em;
-}   
+} 
 
 .tooltip{
     display: none;
@@ -363,6 +372,7 @@ span{
     border-radius: 5px;
     padding: 10px;
     z-index: 1;
+    top: 80%;
 }
 #species-basestats, #species-coverage{
     flex-grow: 1;

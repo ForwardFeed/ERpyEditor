@@ -134,14 +134,15 @@ export class Selectable {
 }
 
 
-export function setLongClickSelection(node, callback, time = 1000, bgColor = "red"){
+export function setLongClickSelection(node, callback, time = 500, bgColor = "red"){
     const extendableDiv  = e("div", "extend")
     extendableDiv.style.backgroundColor = bgColor
     extendableDiv.style.display = "none"
     node.append(extendableDiv)
     node.style.position = "relative"
     //weird hacks but so it doesn't "click" when long click with the stopImmediaPropagation
-    const ifNotLongClick = node.onclick?.bind({})
+    const sharedEvent = {ev: {}}
+    const ifNotLongClick = node.onclick?.bind(sharedEvent)
     node.onclick = null
     let timeout
     let hasFired = true
@@ -150,7 +151,6 @@ export function setLongClickSelection(node, callback, time = 1000, bgColor = "re
         hasFired = false
         timeout = setTimeout(()=>{
             hasFired = true
-            callback()
         }, time)
         extendableDiv.animate([
             { width: "0%"},
@@ -162,7 +162,9 @@ export function setLongClickSelection(node, callback, time = 1000, bgColor = "re
     }
     const mouseUp = (ev)=>{
         extendableDiv.style.display = "none"
-        if (!hasFired && ifNotLongClick) ifNotLongClick.apply() //transform the long click into a short click
+        //transform the long click into a short click
+        sharedEvent.ev = ev
+        if (!hasFired && ifNotLongClick) ifNotLongClick.apply()
         ev.stopImmediatePropagation(); 
         clearTimeout(timeout)
     }
@@ -182,7 +184,6 @@ export function reorderNodeList(list, sortFn, direction = "<"){
         if (sortFn){
             clonedForReorder = structuredClone(gameData.species).sort(sortFn)
         } else {
-            console.log(sortFn)
             clonedForReorder = structuredClone(gameData.species)
         }
         if (direction === ">") clonedForReorder = clonedForReorder.reverse()

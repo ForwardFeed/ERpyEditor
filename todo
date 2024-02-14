@@ -1,0 +1,49 @@
+- [ ] Push code to github
+
+- [ ] Answer these questions
+    - [ ] Should we make it desktop only? i want to make the UI editable only by using right click (that's a complicated story)
+    - [ ] Should we overwrite completely or edit the file smartly?
+
+- [ ] Open a project
+    - [ ] Ask the user for the file
+    - [ ] Verify that it's the right root folder
+    - [ ] Tell the user that it is a wrong folder they chosen
+    - [ ] Allow the user to change the folders
+    - [ ] Change branches of the users
+
+- [ ] Programming Logic
+    - [ ] Agree on the right way to write the files and write following to the todo
+    - [ ] Log all changes in a file, for debug purposes. and maybe turn it as a "history" feature.
+    - [ ] Load the sprites dynamically, DD have a python script for that already.
+    - [ ] Allow to add pokemons
+    - [ ] Allow to remove pokemons
+    # Audacious but won't kill to write
+    - [ ] Sprite editor
+    - [ ] Allow to edit the code (i.e. abilities.c or directly battle_utils)
+
+- [ ] DataStructure
+    - [ ] Agree on the data structure to use and write the following to the todo
+
+- [ ] UI
+    - [ ] Share the right data in the write format to the Logic
+    - [ ] Find a right way to implement the UI as editable
+    - [ ] Find a way to import the latest bugfixes and upgrades without much work
+    - [ ] Mix both of these ^
+    - [ ] Add a menu about the project
+        - [ ] ask the user about loading a project
+        - [ ] allow to change project
+        - [ ] Ask the user to wait a bit before the project loads.
+        - [ ] add a manual of utilisation
+    - [ ] add an error space
+    - [ ] add a toast information bubble
+    - [ ] Add log to the UI of all changes.
+    - [ ] remember the last project open, and maybe open it automatically.
+    - [ ] Allow to add pokemons
+    - [ ] Allow to remove pokemons
+    # Audacious but won't kill to write
+    - [ ] Sprite editor
+    - [ ] Allow to edit the code
+
+- [ ] Sharing the program and Builds
+    - [ ] Full instructions on how to install the program using python
+    - [ ] Export the project as a binary ready to execute

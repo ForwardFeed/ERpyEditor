@@ -1,8 +1,3 @@
-/**
- * this file will be to calculate the weaknesses of pokemon
- * I need to add this before i create the team builder tab (I will create a behind the back tab with the species)
- */
-
 import { gameData } from "./data_version.js"
 
 /**
@@ -14,6 +9,10 @@ import { gameData } from "./data_version.js"
  * ]
  * }
  */
+const IMMUNE = 0
+const RESIST = 1
+const WEAK = 2
+
 const typeChart = {
     "Normal": [["Ghost"],
         [],
@@ -120,6 +119,7 @@ const abilityAddingType = {
     "Aquatic": "Water",
     "Turboblaze": "Fire",
     "Teravolt": "Electric",
+    "Fairy Tale": "Fairy", //TODO ADD IT TO THE CALC TOO
 }
 
 export function abilitiesToAddedType(abis){
@@ -129,41 +129,30 @@ export function abilitiesToAddedType(abis){
     }
     return undefined
 }
-
-const abiltyModifyTypeChart = {
-    "Gifted Mind" : (atkT, defT) => {
-        if (defT === "Psychic"  && typeChart[Psychic][2].indexOf(atkT) !== 1){
-            return 1
-        }
-    },
-    "Flash Fire": (atkT, defT) => {
-        if (atkT === "Fire") return 0
-    },
-    "Sea Weed": (atkT, defT) => {
-        if (atkT === "Fire") return 0.5
-    },
-    /*
-    "Overwhelm": (atkT, defT) => {
-        if (atkT === "Dragon") return 0.5
-    },*/
-    /*
-    "Raw Wood": (atkT, defT) => {
-        if (atkT === "Grass") return 0.5
-    },*/
-    /*"Molten Down": (atkT, defT) => {
-        if (defT)
-    }*/
-}
-
 /**
  * 
  * @param {string[]} defTypes 
  * @param {string[]} abilities 
  */
-export function getDefensiveCoverage(defTypes){
+export function getDefensiveCoverage(defTypes, abis){
+    const modifiers = abilityModifiesTypeChart(abis)
     const defensiveCoverage = []
     for (const AtkT of gameData.typeT){
         let typeEffectiveness = 1
+        if (modifiers[0].indexOf(AtkT) != -1) {
+            typeEffectiveness = 0
+            defensiveCoverage.push(typeEffectiveness)
+            continue
+        }
+        if (modifiers[1].indexOf(AtkT) != -1) {
+            typeEffectiveness = 1
+        }
+        if (modifiers[2].indexOf(AtkT) != -1) {
+            typeEffectiveness = 0.5
+        }
+        if (modifiers[3].indexOf(AtkT) != -1) {
+            typeEffectiveness = 2
+        }
         for (const defT of defTypes){
             typeEffectiveness *= getTypeEffectiveness(AtkT, defT)
         }
@@ -182,6 +171,65 @@ export function getDefensiveCoverage(defTypes){
         }
     })
     return defensiveCoverageSorted
+}
+// misses things like Magma Armor or others that reduce by 35% like Filter
+// or Ice Scales or Fluffy for Physical or other damage
+const abilityThatAddsImmunity = {
+    "Flash Fire": ["Fire"],
+    "Sap Sipper": ["Grass"],
+    "Volt Absorb": ["Electric"],
+    "Lightning Rod": ["Electric"],
+    "Motor Drive": ["Electric"],
+    "Water Absorb": ["Water"],
+    "Dry Skin": ["Water"],
+    "Storm Drain": ["Water"],
+    "Evaporate": ["Water"],
+    "Wonder Guard": [], //Find a way to put it
+    "Levitate": ["Ground"],
+    "Dragonfly": ["Ground"],
+    "Mountaineer": ["Rock"],
+    "Poison Absorb": ["Poison"],
+}
+
+const abilityThatAddsNormal = {
+    "Gifted Mind": typeChart.Psychic[WEAK],
+}
+
+const abilityThatAddsResist = {
+    "Well Baked Body": ["Fire"],
+    "Water Bubble": ["Fire"],
+    "Sea Weed": ["Fire"],
+    "Heatproof": ["Fire"],
+    "Thick Fat": ["Fire", "Ice"],
+    "Immunity": ["Poison"],
+    "Fossilized": ["Rock"],
+    "Raw Wood": ["Grass"],
+}
+
+const abilityThatAddsWeakness = {
+    "Fluffy": ["Fire"],
+    "Liquified": ["Water"],
+}
+
+function abilityModifiesTypeChart(abis){
+    abis = abis.map(x => gameData.abilities[x].name)
+    const modifiers = [
+        [],
+        [],
+        [],
+        [],
+    ]
+    for (const abi of abis){
+        const addedImunity = abilityThatAddsImmunity[abi]
+        if (addedImunity) modifiers[0].push(...addedImunity)
+        const addedNormal = abilityThatAddsNormal[abi]
+        if (addedNormal) modifiers[1].push(...addedNormal)
+        const addedResist = abilityThatAddsResist[abi]
+        if (addedResist) modifiers[2].push(...addedResist)
+        const addedWeak = abilityThatAddsWeakness[abi]
+        if (addedWeak) modifiers[3].push(...addedWeak)
+    }
+    return modifiers
 }
 
 /**

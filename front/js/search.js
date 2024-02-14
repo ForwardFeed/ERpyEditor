@@ -115,6 +115,9 @@ export const search = {
 export function onkeySearchFilter(ev, divSuggestions, inputSearch, callback){
     search.suggestionNode = divSuggestions
     search.suggestionInput = inputSearch
+    // i am required to do this if i want in filters.js > hasFilter()
+    // to able to select by HTML attribute, yes it is akward but it works
+    inputSearch.setAttribute("value", inputSearch.value)
     divSuggestions.style.display = "block"
     if (search.timeoutAutoComplete) clearTimeout(search.timeoutAutoComplete)
     search.timeoutAutoComplete = setTimeout(()=>{
@@ -181,9 +184,7 @@ const evKeymap = {
 }
 
 export function setupSearch(){
-    $('#search-keys').on('change', ()=>{
-        activateSearch()
-    })
+    $('#search-keys').on('change', activateSearch)
     $('#search-bar').on('keyup search', (ev)=>{
         onkeySearchFilter(ev, $('#search-suggestion')[0], $('#search-bar')[0],
         ()=>{

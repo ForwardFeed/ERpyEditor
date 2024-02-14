@@ -1,12 +1,14 @@
 import { gameData } from "../data_version.js"
 import { search } from "../search.js"
-import { queryFilter2, longClickToFilter } from "../filters.js"
+import { queryFilter2, longClickToFilter, trickFilterSearch} from "../filters.js"
 import { AisInB, e, JSHAC } from "../utils.js"
 import { removeInformationWindow } from "../window.js"
+import { setAllMoves } from "./species_panel.js"
 
 export let matchedMoves
-
+let currentMoveID = 0
 export function feedPanelMoves(moveID) {
+    currentMoveID = moveID
     const move = gameData.moves[moveID]
     $('#moves-name').text(move.name)
     $('#moves-pwr').text(move.pwr ? move.pwr == 1 ? "?" : move.pwr : "--")
@@ -34,7 +36,7 @@ function setTypes(types) {
     }
 }
 
-function listMoveFlags(flags, core) {
+function listMoveFlags(flags, core, longClickCallback = ()=>{}) {
     const flagMap = {
         "Makes Contact": "Has contact and Big Pecks boost",
         "Kings Rock Affected": "Triggers King's rock",
@@ -79,7 +81,7 @@ function listMoveFlags(flags, core) {
         const descFlag = flagMap[flag]
         if (!descFlag) continue
         const node = e("div", undefined, descFlag)
-        longClickToFilter(2, node, "move-effect", () => {return flag})
+        longClickToFilter(2, node, "move-effect", () => {return flag}, longClickCallback)
         frag.append(node)
     }
     const noFlagArray = Object.keys(NoFlagMap)
@@ -87,7 +89,7 @@ function listMoveFlags(flags, core) {
         if (flags.indexOf(noFlag) != -1) continue
         const descFlag = NoFlagMap[noFlag]
         const node = e("div", undefined, descFlag)
-        longClickToFilter(2, node, "move-effect", () => {return descFlag})
+        longClickToFilter(2, node, "move-effect", () => {return descFlag}, longClickCallback)
         frag.append(node)
     }
     core.empty()
@@ -136,12 +138,16 @@ export function redirectMove(moveId) {
 
 
 export function moveOverlay(moveId) {
+    const triggerMoveRefresh = ()=>{
+        trickFilterSearch(2)
+        setAllMoves()
+    }
     const move = gameData.moves[moveId]
     const core = e("div", "move-overlay")
     const power = e("div", "move-overlay-power")
     const powerTitle = e("div", "move-overlay-top", move.name)
-    powerTitle.onclick = () => {
-        removeInformationWindow()
+    powerTitle.onclick = (ev) => {
+        removeInformationWindow(ev)
         redirectMove(moveId)
     }
     const powerNumber = e("div", "move-overlay-fill", move.pwr || "?")
@@ -154,12 +160,18 @@ export function moveOverlay(moveId) {
     const typeDiv = e("div", "move-overlay-types")
     const type1 = gameData.typeT[move.types[0]]
     const type1Div = e("div", `move-overlay-type ${type1.toLowerCase()}`, type1)
+    longClickToFilter(2, type1Div, "type", undefined, triggerMoveRefresh)
     const type2 = move.types[1] ? gameData.typeT[move.types[1]] : ""
     const type2Div = e("div", `move-overlay-type ${type2.toLowerCase()}`, type2)
+    longClickToFilter(2, type2Div, "type", undefined, triggerMoveRefresh)
+    const splitDiv = e('div')
     const split = e("img", "move-overlay-img pixelated")
     split.src = `./icons/${gameData.splitT[move.split]}.png`
+    longClickToFilter(2, splitDiv, "category", 
+            ()=>{ return gameData.splitT[move.split].toLowerCase() || ""}
+        , triggerMoveRefresh)
     const effectsDiv = e("div", "move-overlay-effects")
-    listMoveFlags(move.flags.map((x) => gameData.flagsT[x]), $(effectsDiv))
+    listMoveFlags(move.flags.map((x) => gameData.flagsT[x]), $(effectsDiv), triggerMoveRefresh)
 
     return JSHAC([
         core, [
@@ -178,7 +190,9 @@ export function moveOverlay(moveId) {
                     type1Div,
                     type2Div,
                 ],
-                split
+                splitDiv, [
+                    split
+                ]
             ],
             effectsDiv
         ]
@@ -239,5 +253,6 @@ export function updateMoves(searchQuery) {
             node.hide()
         }
     }
-    if (validID) feedPanelMoves(validID)
+    //if the current selection isn't in the list then change
+    if (matchedMoves && matchedMoves.indexOf(currentMoveID) == -1 && validID) feedPanelMoves(validID)
 }
