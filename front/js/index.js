@@ -8,6 +8,7 @@ import { setupFilters } from "./filters.js"
 import { setupTeamBuilder } from "./panels/team_builder.js"
 import { activateInsanity } from "./insanity.js"
 import { setupMoves} from "./panels/moves_panel.js"
+import { setupEditor } from "./editor/editor.js"
 
 $(document).ready(function(){
     window.onerror = function(msg, url, lineN){
@@ -22,7 +23,7 @@ $(document).ready(function(){
     setupDataVersionning()
     setupSearch()
     setupFilters()
-    addTooltip($('.main-title')[0], 'Berkay, the dex is up btw')
+    setupEditor()
     $('#insanity').on('click', activateInsanity)
     
 })
