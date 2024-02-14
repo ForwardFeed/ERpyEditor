@@ -1,2 +1,3 @@
 # Project related
-./update_from_nextdex.sh
+update_from_nextdex.sh
+debug.txt

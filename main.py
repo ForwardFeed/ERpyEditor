@@ -1,18 +1,15 @@
-#!/usr/bin/env python3
-
-import os
-
+import watchfiles
 import webview
 
 from back.api import Api
 
-"""
-An example of serverless app architecture
-courtesy of https://github.com/r0x0r/pywebview/blob/docs/examples/todos/start.py
-"""
+def watch_and_reload(window):
+    for change in watchfiles.watch('./front'):
+        ## i couldn't get window.load_url() to actually work so I used this instead
+        window.evaluate_js('window.location.reload()')
 
 
 if __name__ == '__main__':
     api = Api()
-    webview.create_window('ERpyEditor', 'front/index.html', js_api=api, min_size=(600, 450), fullscreen=True)
-    webview.start(debug=True)
+    window = webview.create_window('ERpyEditor', 'front/index.html', js_api=api, min_size=(600, 450), fullscreen=True)
+    webview.start(watch_and_reload, window, debug=True)
