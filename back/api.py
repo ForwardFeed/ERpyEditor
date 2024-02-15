@@ -1,5 +1,4 @@
-
-
+import webview
 
 class Api:
     def addItem(self, title):
@@ -16,3 +15,5 @@ class Api:
 
     def toggleFullscreen(self):
         webview.windows[0].toggle_fullscreen()
+
+    
