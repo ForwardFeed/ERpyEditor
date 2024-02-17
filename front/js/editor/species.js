@@ -37,14 +37,14 @@ function callbackModifyEvo(row, ev_cb){
     })
     // EDIT KIND OF EVOLUTIONS
     const kindSelect = e('select')
-    evoKindList.map((x)=>{
+    gameData.evoKindT.map((x)=>{
         const option =  e("option",null, x.replace('EVO_', '').split('_').map(toLowerButFirstCase).join(' '))
         option.value = x
         kindSelect.append(option)
     })
-    kindSelect.value = evoKindList[gameData.species[currentSpecieID].evolutions[rowIndex].kd]
+    kindSelect.value = gameData.evoKindT[gameData.species[currentSpecieID].evolutions[rowIndex].kd]
     kindSelect.onchange = ()=>{
-        gameData.species[currentSpecieID].evolutions[rowIndex].kd = evoKindList.indexOf(kindSelect.value)
+        gameData.species[currentSpecieID].evolutions[rowIndex].kd = gameData.evoKindT.indexOf(kindSelect.value)
     }
     // EDIT REASON OF EVOLUTION
     const reasonInput = e('input', )
