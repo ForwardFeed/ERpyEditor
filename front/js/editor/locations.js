@@ -3,13 +3,13 @@ import { gameData } from "../data_version.js"
 import { JSHAC, e } from "../utils.js"
 import { currentLocID } from "../panels/locations_panel.js"
 import { getSpritesURL } from "../panels/species_panel.js"
+import { getPokeList } from "./editor.js"
 
-export let dataList = undefined, pokeList = undefined
 /**
  * 
  * @param {Event} ev 
  */
-export function overlayEditLocation(ev){
+export function locationEdit(ev){
     const node = ev.target
     const panel = $(node).closest('.location-field')
     const locaField = panel.find('.location-title').text()
@@ -17,17 +17,11 @@ export function overlayEditLocation(ev){
         console.warn(`Couldn't find location title with ${node}`)
         return false
     }
-    if (!dataList){
-        pokeList = gameData.species.map(x => x.name)
-        dataList = e("datalist")
-        dataList.id = "item-datalist"
-        pokeList.map((x)=>{
-            const option =  e("option",)
-            option.value = x
-            dataList.append(option)
-        })
-        panel.append(dataList)
-    }
+    if (panel.find('input').length) return // already in edit mode
+    
+    const pokeList = getPokeList()
+
+
     const xrateMap = {
         "Land": "land",
         "Water": "water",
@@ -49,7 +43,7 @@ export function overlayEditLocation(ev){
         input.replaceWith($(e('input', '', )))
         input = block.find('input')
         input.val(monVal)
-        input.attr('list', "item-datalist")
+        input.attr('list', "poke-datalist")
         block.on('click', ()=>{
             input.focus()
         })
