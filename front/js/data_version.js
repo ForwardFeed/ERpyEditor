@@ -25,6 +25,12 @@ function changeVersion(version){
 }
 
 export function setupDataVersionning(){
-    
+    fetch(`js/data/gameDataV1.6.1.json`)
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("took gamedata from server")
+            gameData = data
+            hydrate()
+    })
 }
 
