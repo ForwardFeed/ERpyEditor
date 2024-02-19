@@ -9,21 +9,31 @@ import { setupTeamBuilder } from "./panels/team_builder.js"
 import { activateInsanity } from "./insanity.js"
 import { setupMoves} from "./panels/moves_panel.js"
 import { setupEditor } from "./editor/editor.js"
+import { load, endLoad } from "./loading.js"
 
 $(document).ready(function(){
     window.onerror = function(msg, url, lineN){
         //document.getElementById('ugly-error-span').innerText += `in ${url.replace(/[^/]+\//g, '')} ${lineN}: ${msg}`
     }
-    setupHeader()
-    setupSettings()
-    setupPanels()
-    setupMoves()
-    setupSpeciesPanel()
-    setupTeamBuilder() // the team builder BEFORE data version is Important
-    setupDataVersionning()
-    setupSearch()
-    setupFilters()
-    setupEditor()
+    const setupSteps = [
+        [setupSettings, "settings"],
+        [setupPanels, "side bar"],
+        [setupMoves, "panel moves"],
+        [setupSpeciesPanel, "panel species"],
+        [setupTeamBuilder, "panel builder"], // the team builder BEFORE data version is Important
+        [setupSearch, "search frame"],
+        [setupFilters, "filter frame"],
+        [setupDataVersionning, "gamedata loader"],
+        [setupEditor, "editor loader"],
+        [function(){
+            changeVersion(fetchFromLocalstorage("lastusedversion"), true)
+        }, "loading gamedata"],
+    ]
+    for (const step of setupSteps){
+        load(step[0], step[1])
+    }
+    //misc
+    setupHeader()    
     $('#insanity').on('click', activateInsanity)
     
 })

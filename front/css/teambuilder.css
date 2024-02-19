@@ -2,30 +2,8 @@
     overflow: scroll;
 }
 
-.builder-top{
-    background-color:  var(--colorA);
-    height: 30%;
-    display: flex;
-}
-.builder-select{
-    width: 2em;
-    display: flex;
-    flex-direction: column;
-}
-.builder-select > div{
-    flex-grow: 1;
-    display: flex;
-    text-align: center;
-}
-.builder-select > div > span{
-    width: 100%;
-}
-.builder-top-data{
-    flex-grow: 1;
-}
 .builder-bot{
     background-color:  var(--colorB);
-    height: 70%;
     overflow: scroll;
     display: flex;
     flex-wrap: wrap;
@@ -38,9 +16,9 @@
     border-width: 2px;
     margin: auto;
     display: flex;
-    flex-direction: column;
-    width: 100%;
+    width: calc(50% - 4px);
     min-height: 3.5em;
+    height: 10em;
 }
 .builder-placeholder{
     border-radius: 10px;
@@ -51,6 +29,9 @@
 .builder-placeholder:hover{
     cursor: pointer;
     background-color: var(--selHover);
+}
+.trainers-pokemon-builder{
+    width: unset;
 }
 .builder-mon-delete{
     position: absolute;
@@ -85,18 +66,26 @@
     /*height: calc(100% - 1em); this is if there the name of the specie*/
     width: 6em;
 }
-.builder-editor-abilities, .builder-overlay-abilities{
+.builder-overlay-abis-inns{
+    display: flex;
+}
+.builder-overlay-abis-desc{
+    height: fit-content;
+    background-color: var(--colorC);
+}
+.builder-editor-abilities, .builder-overlay-abilities, .builder-overlay-innates{
     display: flex;
     flex-grow: 1;
     text-align: left;
     flex-direction: column;
     margin: auto;
+    background-color: var(--colorA);
 }
-.builder-overlay-abilities{
+.builder-overlay-abilities, .builder-overlay-innates{
     height: 6em;
 }
-.builder-editor-ability, .builder-overlay-ability{
-    width: 100%;
+.builder-editor-ability, .builder-overlay-ability, .builder-overlay-innate{
+    width: 6em;
     margin: auto;
 }
 .builder-overlay-ability:hover{
