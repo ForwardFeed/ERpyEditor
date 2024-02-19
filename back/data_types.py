@@ -54,7 +54,72 @@ class CompactSpecies:
         self.dex = dex
         self.id = id
 
+class Locations:
+    def __init__(self):
+        self.maps = []
+        self.landRate = []
+        self.waterRate = []
+        self.fishRate = []
+        self.honeyRate = []
+        self.rockRate = []
+        self.hiddenRate = []
+        self.rodGrade = []
 
+class Location:
+    def __init__(self, name):
+        self.name = name
+        self.land = None
+        self.landR = None
+        self.water = None
+        self.waterR = None
+        self.fish = None
+        self.fishR = None
+        self.honey = None
+        self.honeyR = None
+        self.rock = None
+        self.rockR = None
+        self.hidden = None
+        self.hiddenR = None
+
+class Encounter:
+    def __init__(self, min_val, max_val, species):
+        self.min = min_val
+        self.max = max_val
+        self.species = species
+
+
+# export interface Locations{
+#     maps: Location[],
+#     landRate: number[],
+#     waterRate: number[],
+#     fishRate: number[],
+#     honeyRate: number[],
+#     rockRate: number[],
+#     hiddenRate: number[],
+#     rodGrade: number[],
+
+# }
+# export interface Location {
+#     name: string,
+#     land: Encounter[] | undefined,
+#     landR: number | undefined,
+#     water: Encounter[] | undefined,
+#     waterR: number | undefined,
+#     fish: Encounter[] | undefined,
+#     fishR: number | undefined,
+#     honey: Encounter[] | undefined,
+#     honeyR: number | undefined,
+#     rock: Encounter[] | undefined,
+#     rockR: number | undefined,
+#     hidden: Encounter[] | undefined,
+#     hiddenR: number | undefined,
+# }
+
+# export interface Encounter{
+#     min: number,
+#     max: number,
+#     specie: string
+# }
 
 # interface CompactBaseStats{
 #     base: number[]
