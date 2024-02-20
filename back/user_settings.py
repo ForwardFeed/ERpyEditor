@@ -53,11 +53,12 @@ class Settings:
     def save(self):
         with open(DEFAULT_PATH_SAVE, 'w') as file:
             file.write(json.dumps(self.user_settings.__dict__))
+        return self
         
 
 
 if __name__ == '__main__':
     user_settings = Settings()
-    user_settings.fetch().verify()
+    user_settings.fetch().verify().save()
 
     print(user_settings)

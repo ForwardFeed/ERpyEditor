@@ -10,6 +10,7 @@ parsingList = [
     ("changeParsingList")
 ]
 
+
 class CParsibleFile:
     def __init__(self, filedata: str, macros: dict[int|bool] = {}, unsolved = []):
         self.uncommented_data: str = ""
@@ -37,6 +38,7 @@ class CParsibleFile:
         re_define = re.compile(r"#define")
         re_define_data = re.compile(r"(?<=#define).*")
         re_define_split = re.compile(r"\s+")
+        re_remove_bracket = re.compile(r"[\(\)]")
         lines: list[str] = self.uncommented_data.split('\n')
         line_number: int = -1
         for line in lines:
@@ -47,19 +49,31 @@ class CParsibleFile:
                     print("matched a define but didn't found the data : ",line) # maybe throw an exception
                     continue
                 elements = list(filter(lambda x: x, re.split(re_define_split, define_value.group())))
+                elements = list(map(lambda el: re.sub(re_remove_bracket, '', el), elements))
                 if not self.try_resolve_macro(elements):
                     self.unsolved_macros.append(elements)
                 else:
                     self.try_solve_unsolved_macros()
-        print(self.macros)
-        return
+        while self.try_solve_unsolved_macros():
+            print(len(self.unsolved_macros))
+            continue
 
     def try_solve_unsolved_macros(self):
-        for unsolved in self.unsolved_macros:
+        oneSolvedAtLeast = False
+        indexToRemove = []
+        lenA = len(self.unsolved_macros)
+        for i in range(0, lenA):
+            unsolved = self.unsolved_macros[i]
             result = self.try_resolve_macro(unsolved)
             if result:
-                del unsolved
-            
+                indexToRemove.append(i)
+                oneSolvedAtLeast = True
+        
+        ohohohomickey = 0
+        for index in indexToRemove:
+            del self.unsolved_macros[index - ohohohomickey]
+            ohohohomickey += 1
+        return oneSolvedAtLeast
 
     def resolve_macro(self, key: str, data: any):
         if type(data) is int or type(data) is bool:
@@ -71,8 +85,7 @@ class CParsibleFile:
         isResolved = self.resolve_machine(elements)
         if isResolved:
             self.macros[isResolved[0]] = isResolved[1]
-            return True
-        return False
+        return bool(isResolved)
 
     def resolve_machine(self, __elements__: list[str]):
         elements = __elements__.copy()
@@ -82,7 +95,10 @@ class CParsibleFile:
             return (key, True)
         elements = list(map(lambda el: self.try_resolve_element(el), elements))
         if len(elements) == 1:
-            return (key, elements[0])
+            a = elements[0]
+            if type(a) is str:
+                return None
+            return (key, a)
         if len(elements) % 2:
             for opIndex in range(1, len(elements), 2):
                 a = elements[opIndex - 1]
@@ -92,6 +108,8 @@ class CParsibleFile:
                     return None
                 if op == "+":
                     result = a + b
+                elif op == "-":
+                    result = a - b
                 elif op == "||":
                     result = bool(a or b)
                 elif op == "&&":
@@ -117,6 +135,8 @@ class CParsibleFile:
         else:
             resolve = element
         return resolve
+    
+
 
 class CParser:
     def __init__(self, files_path: list[str]):
@@ -128,10 +148,10 @@ class CParser:
         for file_path in self.files_path:
             with open(file_path, 'r') as file:
                 self.files.append(CParsibleFile(file.read()))
-        #print(self.files[2].uncommented_data)
+        print("unsolved", self.files[0].unsolved_macros)
+        print("solved", self.files[0].macros)
 
     
-    
-    
-
-CParser(['back/tests/file1.h', 'back/tests/file2.h', 'back/tests/global.h', 'back/tests/abilities.h'])
+if __name__ == '__main__':
+    #CParser(['back/tests/file1.h', 'back/tests/file2.h', 'back/tests/global.h', 'back/tests/abilities.h'])
+    CParser(['back/tests/items.h'])
