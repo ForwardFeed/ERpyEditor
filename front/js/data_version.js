@@ -4,7 +4,7 @@ import { saveToLocalstorage, fetchFromLocalstorage } from './settings.js';
  * To select which version of the game data to have
  */
 /**@type {import('./compactify.js').CompactGameData} */
-export let gameData;
+export let gameData, compareData;
 
 // each time the data is modified, this is updated
 // so the client checks if it have the latest version by checking lo
