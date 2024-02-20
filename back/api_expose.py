@@ -7,7 +7,7 @@ class ApiExpose:
 
 
     def test(self):
-        self.path = "C:\\Users\\Jadiel\\Desktop\\decomps\\eliteredux\\"
+        self.path = "//Users//jadielrios//Documents//ER Editor//eliteredux//"
         self.get_wild_encounters()
 
     #Function to set what version of the game the API will be reading from
@@ -52,13 +52,39 @@ class ApiExpose:
                     mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
                 Loc.water = mons
                 locations.append(Loc)
-        
-        for loc in locations:
-            print(loc.name)
-            if loc.land != None:
-                print(len(loc.land))
-            if loc.water != None:
-                print(len(loc.water))
+            if "honey_mons" in enc:
+                honeymons = enc["honey_mons"]
+                Loc.honeyR = honeymons["encounter_rate"]
+                mons = []
+                for mon in honeymons["mons"]:
+                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
+                Loc.honey = mons
+                locations.append(Loc)
+            if "honey_mons" in enc:
+                honeymons = enc["honey_mons"]
+                Loc.honeyR = honeymons["encounter_rate"]
+                mons = []
+                for mon in honeymons["mons"]:
+                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
+                Loc.honey = mons
+                locations.append(Loc)
+            if "hidden_mons" in enc:
+                hiddenmons = enc["hidden_mons"]
+                Loc.hiddenR = hiddenmons["encounter_rate"]
+                mons = []
+                for mon in hiddenmons["mons"]:
+                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
+                Loc.hidden = mons
+                locations.append(Loc)
+            if "rock_smash_mons" in enc:
+                rockmons = enc["rock_smash_mons"]
+                Loc.rockR = rockmons["encounter_rate"]
+                mons = []
+                for mon in rockmons["mons"]:
+                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
+                Loc.rock = mons
+                locations.append(Loc)
+            
             
 
 
