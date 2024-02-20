@@ -40,6 +40,7 @@ class ApiExpose:
         with open(self.path + "src\\data\\wild_encounters.json","r") as js:
             js = json.load(js)
         wildEncounters = js["wild_encounter_groups"][0]["encounters"]
+        #todo could  be eefractored but low priority
         for enc in wildEncounters:
             name = enc["map"]
             Loc = Location(name)

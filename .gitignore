@@ -1,3 +1,7 @@
 # Project related
 update_from_nextdex.sh
 debug.txt
+user_setttings.json
+
+#Python related
+__pycache__/
