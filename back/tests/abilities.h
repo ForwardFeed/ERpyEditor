@@ -88,4 +88,7 @@ const u8 gAbilityNames[ABILITIES_COUNT][ABILITY_NAME_LENGTH + 1] =
     #if (NB_A < NB_B) && (NB_B < NB_C)
         [ABILITY_10] = _(""),
     #endif
+    #if NB_A || NB_B || NB_C || NB_NONE
+        [ABILITY_11] = _(""),
+    #endif
 };
