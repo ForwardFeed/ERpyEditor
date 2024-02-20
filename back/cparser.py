@@ -11,10 +11,10 @@ parsingList = [
 ]
 
 class CParsibleFile:
-    def __init__(self, filedata: str, macros: dict[int|bool] = {}):
+    def __init__(self, filedata: str, macros: dict[int|bool] = {}, unsolved = []):
         self.uncommented_data: str = ""
         self.macros = macros
-        self.unsolved_macros = []
+        self.unsolved_macros = unsolved
         self.filter_c_comments(filedata)
         self.grab_macro_definition()
     
@@ -46,23 +46,19 @@ class CParsibleFile:
                 if not define_value:
                     print("matched a define but didn't found the data : ",line) # maybe throw an exception
                     continue
-                elements: list[str] = list(filter(lambda x: x, re.split(re_define_split, define_value.group())))
-                isResolved = self.try_resolve_macro(elements)
-                if isResolved:
-                    self.macros[isResolved[0]] = isResolved[1]
-                    self.try_solve_unsolved_macros()
-                else:
+                elements = list(filter(lambda x: x, re.split(re_define_split, define_value.group())))
+                if not self.try_resolve_macro(elements):
                     self.unsolved_macros.append(elements)
-
+                else:
+                    self.try_solve_unsolved_macros()
         print(self.macros)
         return
 
     def try_solve_unsolved_macros(self):
         for unsolved in self.unsolved_macros:
-            isResolved = self.try_resolve_macro(unsolved)
-            if isResolved:
-                self.macros[isResolved[0]] = isResolved[1]
-                del self.unsolved_macros[unsolved]
+            result = self.try_resolve_macro(unsolved)
+            if result:
+                del unsolved
             
 
     def resolve_macro(self, key: str, data: any):
@@ -71,8 +67,15 @@ class CParsibleFile:
         else:
             print('could not resolve macro : ' + data )
 
-    def try_resolve_macro(self, list_elements: list[str]):
-        elements = list_elements.copy()
+    def try_resolve_macro(self, elements: list[str]):
+        isResolved = self.resolve_machine(elements)
+        if isResolved:
+            self.macros[isResolved[0]] = isResolved[1]
+            return True
+        return False
+
+    def resolve_machine(self, __elements__: list[str]):
+        elements = __elements__.copy()
         key = elements[0]
         del elements[0]
         if len(elements) == 0:
@@ -86,7 +89,6 @@ class CParsibleFile:
                 op = elements[opIndex]
                 b = elements[opIndex + 1]
                 if type(a) is str or type(b) is str:
-                    #print('could not resolve nested macro : ', list_elements)
                     return None
                 if op == "+":
                     result = a + b
