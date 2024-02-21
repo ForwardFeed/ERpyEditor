@@ -68,17 +68,17 @@ class Locations:
 class Location:
     def __init__(self, name):
         self.name = name
-        self.land = None
+        self.land = []
         self.landR = None
-        self.water = None
+        self.water = []
         self.waterR = None
-        self.fish = None
+        self.fish = []
         self.fishR = None
-        self.honey = None
+        self.honey = []
         self.honeyR = None
-        self.rock = None
+        self.rock = []
         self.rockR = None
-        self.hidden = None
+        self.hidden = []
         self.hiddenR = None
 
 class Encounter:

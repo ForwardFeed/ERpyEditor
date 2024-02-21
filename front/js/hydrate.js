@@ -42,7 +42,11 @@ export function hydrate(firstLoad=false) {
     }
 
     // hydrate the UI with the data
-    console.log(window.api?.get_wild_encounters())
+    window.pywebview.api.get_wild_encounters().then(function(answer){
+        console.log(answer)
+    }).catch(function(e){
+        console.error(e)
+    })
     const steps = [
         [hydrateAbilities, "abilities data"],
         [hydrateMoves, "moves data"],

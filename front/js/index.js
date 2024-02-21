@@ -11,7 +11,15 @@ import { setupMoves} from "./panels/moves_panel.js"
 import { setupEditor } from "./editor/editor.js"
 import { load, endLoad } from "./loading.js"
 
-$(document).ready(function(){
+if (window.pywebview){
+    loadApplication()
+} else {
+    window.addEventListener('pywebviewready', function() {
+        loadApplication()
+    })
+}
+
+function loadApplication() {
     window.onerror = function(msg, url, lineN){
         //document.getElementById('ugly-error-span').innerText += `in ${url.replace(/[^/]+\//g, '')} ${lineN}: ${msg}`
     }
@@ -36,7 +44,7 @@ $(document).ready(function(){
     setupHeader()    
     $('#insanity').on('click', activateInsanity)
     
-})
+}
 
 
 function setupHeader(){

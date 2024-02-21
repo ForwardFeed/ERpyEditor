@@ -17,7 +17,7 @@ class ApiExpose:
         self.path = user_settings.user_settings.project_path
         self.get_wild_encounters()
         #sreverse pokemon just to see if its backwards
-        self.write_wild_encounters(self.test_locations[::-1])
+        #self.write_wild_encounters(self.test_locations[::-1])
 
 
 
@@ -46,57 +46,28 @@ class ApiExpose:
         #todo could  be eefractored but low priority
         for enc in wildEncounters:
             name = enc["map"]
-            Loc = Location(name)
-            if "land_mons" in enc:
-                landmons = enc["land_mons"]
-                Loc.landR = landmons["encounter_rate"]
+            loc = Location(name)
+            encounters_type_list = (
+                    ("land_mons", "land"),
+                    ("water_mons", "water"),
+                    ("honey_mons", "honey"),
+                    ("hidden_mons", "hidden"),
+                    ("rock_smash_mons", "rock")
+                )
+            for encounter_type in encounters_type_list:
+                field_in = encounter_type[0]
+                field_out = encounter_type[1]
+                if not field_in in enc:
+                    continue
+                field_mons = enc[field_in]
+                setattr(loc, field_out + "R", field_mons["encounter_rate"])
                 mons = []
-                for mon in landmons["mons"]:
-                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
-                Loc.land = mons
-                locations.append(Loc)
-            if "water_mons" in enc:
-                watermons = enc["water_mons"]
-                Loc.waterR = watermons["encounter_rate"]
-                mons = []
-                for mon in watermons["mons"]:
-                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
-                Loc.water = mons
-                locations.append(Loc)
-            if "honey_mons" in enc:
-                honeymons = enc["honey_mons"]
-                Loc.honeyR = honeymons["encounter_rate"]
-                mons = []
-                for mon in honeymons["mons"]:
-                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
-                Loc.honey = mons
-                locations.append(Loc)
-            if "honey_mons" in enc:
-                honeymons = enc["honey_mons"]
-                Loc.honeyR = honeymons["encounter_rate"]
-                mons = []
-                for mon in honeymons["mons"]:
-                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
-                Loc.honey = mons
-                locations.append(Loc)
-            if "hidden_mons" in enc:
-                hiddenmons = enc["hidden_mons"]
-                Loc.hiddenR = hiddenmons["encounter_rate"]
-                mons = []
-                for mon in hiddenmons["mons"]:
-                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
-                Loc.hidden = mons
-                locations.append(Loc)
-            if "rock_smash_mons" in enc:
-                rockmons = enc["rock_smash_mons"]
-                Loc.rockR = rockmons["encounter_rate"]
-                mons = []
-                for mon in rockmons["mons"]:
-                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]))
-                Loc.rock = mons
-                locations.append(Loc)
+                for mon in field_mons["mons"]:
+                    mons.append(Encounter(mon["min_level"],mon["max_level"],mon["species"]).__dict__)
+                setattr(loc, field_out, mons)
+                locations.append(loc.__dict__)
         self.test_locations = locations
-        return locations
+        return json.dumps(locations)
 
 
     #locations is a list of Location objects
