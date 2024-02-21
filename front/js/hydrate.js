@@ -42,6 +42,7 @@ export function hydrate(firstLoad=false) {
     }
 
     // hydrate the UI with the data
+    console.log(window.api?.get_wild_encounters())
     const steps = [
         [hydrateAbilities, "abilities data"],
         [hydrateMoves, "moves data"],

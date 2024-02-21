@@ -47,14 +47,12 @@ class CParsibleFile:
             line_number += 1
             if re.search(re_directive,line):
                 self.found_directive(line)
-                continue
-            elif not self.is_ok_to_read == 1:
-                continue
-            self.lines_ok_to_read.append(line_number)
+            if self.is_ok_to_read == 1:
+                self.lines_ok_to_read.append(line_number)
             if re.search(re_define, line):
                 self.found_define(line)  
-            else:
-                print(line)
+            print(line)
+
         while self.try_solve_unsolved_macros():
             continue
 

@@ -3,6 +3,7 @@ import re
 import json
 import os
 from .data_types import *
+from .user_settings import Settings
 class ApiExpose:
     path = ""
     debug = True
@@ -11,7 +12,9 @@ class ApiExpose:
 
 
     def test(self):
-        self.path = "C:\\Users\\Jadiel\\Desktop\\decomps\\eliteredux\\"
+        user_settings = Settings()
+        user_settings.fetch().verify().save()
+        self.path = user_settings.user_settings.project_path
         self.get_wild_encounters()
         #sreverse pokemon just to see if its backwards
         self.write_wild_encounters(self.test_locations[::-1])
@@ -28,7 +31,7 @@ class ApiExpose:
         
     def init_data(self):
         print("Initializing data")
-        with open(self.path + "src\\data\\pokemon\\base_stats.h", "r") as bsf:
+        with open(os.path.join(self.path, "src/data/pokemon/base_stats.h"), "r") as bsf:
             bsf = bsf.readlines()
         for i in range(len(bsf)):
             bsf[i] = re.sub(r'\s','',bsf[i])
@@ -37,7 +40,7 @@ class ApiExpose:
             
     def get_wild_encounters(self):
         locations = []
-        with open(self.path + "src\\data\\wild_encounters.json","r") as js:
+        with open(os.path.join(self.path, "src/data/wild_encounters.json"),"r") as js:
             js = json.load(js)
         wildEncounters = js["wild_encounter_groups"][0]["encounters"]
         #todo could  be eefractored but low priority
@@ -98,7 +101,7 @@ class ApiExpose:
 
     #locations is a list of Location objects
     def write_wild_encounters(self, locations):
-        with open(self.path + "src\\data\\wild_encounters.json","r") as js:
+        with open(os.path.join(self.path, "src/data/wild_encounters.json"),"r") as js:
             js = json.load(js)
         #wildEncounters = js["wild_encounter_groups"][0]["encounters"]
         wildEncounters = []

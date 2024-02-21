@@ -12,7 +12,6 @@ class UserSettings:
         self.project_path = ""
     
     def from_json(self, json_data):
-        print(json_data)
         for field in json_data:
             #may thow here and cause issues where an unknown field to be added
             setattr(self, field, json_data[field])
@@ -60,5 +59,3 @@ class Settings:
 if __name__ == '__main__':
     user_settings = Settings()
     user_settings.fetch().verify().save()
-
-    print(user_settings)
