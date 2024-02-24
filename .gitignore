@@ -2,6 +2,6 @@
 update_from_nextdex.sh
 debug.txt
 user_setttings.json
-
+SPRITES_BACKUP/
 #Python related
 __pycache__/

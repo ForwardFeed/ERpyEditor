@@ -5,6 +5,7 @@ import signal
 from back.api import Api
 from back.api_expose import ApiExpose
 
+
 def watch_and_reload(window):
     for change in watchfiles.watch('./front'):
         ## i couldn't get window.load_url() to actually work so I used this instead

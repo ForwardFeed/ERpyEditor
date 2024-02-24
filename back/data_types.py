@@ -40,19 +40,19 @@ class PokePokedex:
         self.hw = hw
 
 class CompactSpecies:
-    def __init__(self, NAME, name, stats, evolutions, eggMoves, levelUpMoves, TMHMMoves, tutor, forms, SEnc, dex, id):
+    def __init__(self, NAME):
         self.NAME = NAME
-        self.name = name
-        self.stats = stats
-        self.evolutions = evolutions
-        self.eggMoves = eggMoves
-        self.levelUpMoves = levelUpMoves
-        self.TMHMMoves = TMHMMoves
-        self.tutor = tutor
-        self.forms = forms
-        self.SEnc = SEnc
-        self.dex = dex
-        self.id = id
+        self.name = None
+        self.stats = None
+        self.evolutions = None
+        self.eggMoves = None
+        self.levelUpMoves = None
+        self.TMHMMoves = None
+        self.tutor = None
+        self.forms = None
+        self.SEnc = None
+        self.dex = None
+        self.id = None
 
 class Locations:
     def __init__(self):
@@ -87,7 +87,25 @@ class Encounter:
         self.max = max_val
         self.species = species
 
+class TrainerPokemon:
+    def __init__(self, species, ability, ivs, evs, item, nature, moves):
+        self.species = species
+        self.ability = None
+        self.ivs = None
+        self.evs = None
+        self.item = None
+        self.nature = None
+        self.moves = None
 
+# export interface TrainerPokemon{
+#     specie: string,
+#     ability: number,
+#     ivs: number[],
+#     evs: number[],
+#     item: string,
+#     nature: string,
+#     moves: string[]
+# }
 # export interface Locations{
 #     maps: Location[],
 #     landRate: number[],

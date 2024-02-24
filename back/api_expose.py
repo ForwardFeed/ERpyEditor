@@ -2,22 +2,25 @@
 import re
 import json
 import os
+from PIL import Image
 from .data_types import *
 from .user_settings import Settings
 class ApiExpose:
     path = ""
     debug = True
     test_locations = []
-
+    species =[] #list of CompactSpecies objects
+    workingdir = os.getcwd()
 
 
     def test(self):
+        
         user_settings = Settings()
         user_settings.fetch().verify().save()
         self.path = user_settings.user_settings.project_path
-        self.get_wild_encounters()
-        #sreverse pokemon just to see if its backwards
-        #self.write_wild_encounters(self.test_locations[::-1])
+        self.get_sprites()
+        #print(self.workingdir)
+        
 
 
 
@@ -35,8 +38,14 @@ class ApiExpose:
             bsf = bsf.readlines()
         for i in range(len(bsf)):
             bsf[i] = re.sub(r'\s','',bsf[i])
-        #parse line by line, save species name and parse all stats until next species is encountered
-        #to be completed later since missing features from OG editor got pushed to the top of the priority list
+        name_r = re.compile(r"\[(?P<NAME>SPECIES_\w*)\]")
+        for i in range(len(bsf)):
+            if name_r.match(bsf[i]):
+                name = name_r.match(bsf[i]).group("NAME")
+                spe = CompactSpecies(name)
+                spe.name = self.stripName(name)
+                self.species.append(spe)
+
             
     def get_wild_encounters(self):
         locations = []
@@ -130,6 +139,42 @@ class ApiExpose:
                 json.dump(js,file,indent=4)
             
            
+    def get_trainer_teams(self):
+        trainers = {}
+        with open(os.path.join(self.path, "src/data/trainer_parties.h"),"r") as lines:
+            lines = lines.readlines()
+        
+    def stripName(self, name):
+        name = name.replace("SPECIES_","")
+        name = name.lower().split("_")
+        for i in range(len(name)):
+            name[i] = name[i].capitalize()
+        return " ".join(name)
+
+    def get_sprites(self):
+        sprites = {}
+        old_sprites = []
+        for root, dirs, files in os.walk(os.path.join(self.workingdir +"\\front\\sprites")):
+            for file in files:
+                if file.endswith(".png"):
+                    old_sprites.append(file)
+        for dir in os.listdir(os.path.join(self.path + "\\graphics\\pokemon")):
+            if not os.path.isdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir)):
+                continue
+            for ls in os.listdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir)):
+                if ls == "front.png" and dir.upper() + ".png" not in old_sprites:
+                    img = Image.open(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\front.png"))
+                    sprites[dir.upper()] = img
+                elif os.path.isdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\" + ls)):
+                    for file in os.listdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\" + ls)):
+                        if file == "front.png" and dir.upper() + "_" + ls.upper() + ".png" not in old_sprites:
+                            img = Image.open(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\" + ls + "\\front.png"))
+                            sprites[dir.upper() + "_" + ls.upper()] = img
+        for key in sprites:
+            img = sprites[key]
+            img.save(os.path.join(self.workingdir +"\\front\\sprites\\" + key + ".png"))
+
+
 
 
     
