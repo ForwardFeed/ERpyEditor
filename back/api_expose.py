@@ -153,11 +153,11 @@ class ApiExpose:
 
     def get_sprites(self):
         sprites = {}
-        old_sprites = []
+        old_sprites = set()
         for root, dirs, files in os.walk(os.path.join(self.workingdir +"\\front\\sprites")):
             for file in files:
                 if file.endswith(".png"):
-                    old_sprites.append(file)
+                    old_sprites.add(file)
         for dir in os.listdir(os.path.join(self.path + "\\graphics\\pokemon")):
             if not os.path.isdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir)):
                 continue
