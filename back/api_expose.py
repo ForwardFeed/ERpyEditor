@@ -132,10 +132,10 @@ class ApiExpose:
         js["wild_encounter_groups"][0]["encounters"] = wildEncounters
         if self.debug:
             curdir = os.getcwd()
-            with open(curdir + "\\back\\tests\\test.json","w") as file:
+            with open(os.path.join(curdir, "back/tests/test.json","w")) as file:
                 json.dump(js,file,indent=4)
         else:
-            with open(self.path + "src\\data\\wild_encounters.json","w") as file:
+            with open(os.path.join(self.path, "src/data/wild_encounters.json","w")) as file:
                 json.dump(js,file,indent=4)
             
            
@@ -154,28 +154,26 @@ class ApiExpose:
     def get_sprites(self):
         sprites = {}
         old_sprites = set()
-        gp = self.path + "\\graphics\\pokemon\\"
-        for root, dirs, files in os.walk(os.path.join(self.workingdir +"\\front\\sprites")):
+        gp = os.path.join(self.path, "graphics/pokemon/")
+        for root, dirs, files in os.walk(os.path.join(self.workingdir, "front/sprites")):
             for file in files:
                 if file.endswith(".png"):
                     old_sprites.add(file)
         for dir in os.listdir(os.path.join(gp)):
-            if not os.path.isdir(os.path.join(gp + dir)):
+            if not os.path.isdir(os.path.join(gp, dir)):
                 continue
-            for ls in os.listdir(os.path.join(gp + dir)):
+            for ls in os.listdir(os.path.join(gp, dir)):
                 if ls == "front.png" and dir.upper() + ".png" not in old_sprites:
-                    img = Image.open(os.path.join(gp + dir + "\\front.png"))
+                    img = Image.open(os.path.join(gp, dir ,"front.png"))
                     sprites[dir.upper()] = img
-                elif os.path.isdir(os.path.join(gp + dir + "\\" + ls)):
-                    for file in os.listdir(os.path.join(gp + dir + "\\" + ls)):
+                elif os.path.isdir(os.path.join(gp, dir, ls)):
+                    for file in os.listdir(os.path.join(gp, dir, ls)):
                         if file == "front.png" and dir.upper() + "_" + ls.upper() + ".png" not in old_sprites:
-                            img = Image.open(os.path.join(gp + dir + "\\" + ls + "\\front.png"))
+                            img = Image.open(os.path.join(gp, dir, ls, "front.png"))
                             sprites[dir.upper() + "_" + ls.upper()] = img
         for key in sprites:
             img = sprites[key]
-            img.save(os.path.join(self.workingdir +"\\front\\sprites\\" + key + ".png"))
-
-
+            img.save(os.path.join(self.workingdir, "front/sprites/" + key + ".png"))
 
 
     
