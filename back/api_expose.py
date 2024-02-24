@@ -154,21 +154,22 @@ class ApiExpose:
     def get_sprites(self):
         sprites = {}
         old_sprites = set()
+        gp = self.path + "\\graphics\\pokemon\\"
         for root, dirs, files in os.walk(os.path.join(self.workingdir +"\\front\\sprites")):
             for file in files:
                 if file.endswith(".png"):
                     old_sprites.add(file)
-        for dir in os.listdir(os.path.join(self.path + "\\graphics\\pokemon")):
-            if not os.path.isdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir)):
+        for dir in os.listdir(os.path.join(gp)):
+            if not os.path.isdir(os.path.join(gp + dir)):
                 continue
-            for ls in os.listdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir)):
+            for ls in os.listdir(os.path.join(gp + dir)):
                 if ls == "front.png" and dir.upper() + ".png" not in old_sprites:
-                    img = Image.open(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\front.png"))
+                    img = Image.open(os.path.join(gp + dir + "\\front.png"))
                     sprites[dir.upper()] = img
-                elif os.path.isdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\" + ls)):
-                    for file in os.listdir(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\" + ls)):
+                elif os.path.isdir(os.path.join(gp + dir + "\\" + ls)):
+                    for file in os.listdir(os.path.join(gp + dir + "\\" + ls)):
                         if file == "front.png" and dir.upper() + "_" + ls.upper() + ".png" not in old_sprites:
-                            img = Image.open(os.path.join(self.path + "\\graphics\\pokemon\\" + dir + "\\" + ls + "\\front.png"))
+                            img = Image.open(os.path.join(gp + dir + "\\" + ls + "\\front.png"))
                             sprites[dir.upper() + "_" + ls.upper()] = img
         for key in sprites:
             img = sprites[key]
